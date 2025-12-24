@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - Aarogya Saathi</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>👨‍⚕️ Doctor Dashboard</h1>
+                <div class="user-info">
+                    <p><strong>Email:</strong> {{ doctor.email }}</p>
+                    <p><strong>Role:</strong> {{ doctor.role }}</p>
+                    <a href="/logout" class="btn btn-secondary btn-small">Logout</a>
+                </div>
+            </div>
+            
+            {% if created %}
+            <div class="alert alert-success">Medical record created successfully!</div>
+            {% endif %}
+            
+            <div class="dashboard-actions">
+                <a href="/records/create" class="btn btn-primary">➕ Create Medical Record</a>
+            </div>
+            
+            <div class="records-section">
+                <h2>My Medical Records</h2>
+                
+                {% if records %}
+                <div class="records-list">
+                    {% for record in records %}
+                    <div class="record-card">
+                        <h3>{{ record.title }}</h3>
+                        <p class="record-meta">
+                            <strong>Patient:</strong> {{ record.patient_email }}<br>
+                            <strong>Created:</strong> {{ record.created_at.strftime('%Y-%m-%d %H:%M') if record.created_at else 'N/A' }}
+                        </p>
+                        <div class="record-notes">
+                            <strong>Notes:</strong>
+                            <p>{{ record.notes or "No notes provided." }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-state">No medical records yet. Create your first record!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - Aarogya Saathi</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>👤 Patient Dashboard</h1>
+                <div class="user-info">
+                    <p><strong>Email:</strong> {{ patient.email }}</p>
+                    <p><strong>Role:</strong> {{ patient.role }}</p>
+                    <a href="/logout" class="btn btn-secondary btn-small">Logout</a>
+                </div>
+            </div>
+            
+            <div class="records-section">
+                <h2>My Medical Records</h2>
+                
+                {% if records %}
+                <div class="records-list">
+                    {% for record in records %}
+                    <div class="record-card">
+                        <h3>{{ record.title }}</h3>
+                        <p class="record-meta">
+                            <strong>Doctor:</strong> {{ record.doctor_email }}<br>
+                            <strong>Created:</strong> {{ record.created_at.strftime('%Y-%m-%d %H:%M') if record.created_at else 'N/A' }}
+                        </p>
+                        <div class="record-notes">
+                            <strong>Notes:</strong>
+                            <p>{{ record.notes or "No notes provided." }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-state">No medical records yet. Your doctor will add records here.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
