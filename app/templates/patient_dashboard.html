@@ -10,7 +10,13 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>👤 Aarogya Saathi</h2>
+            <h2>
+                <svg class="sidebar-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Aarogya Saathi
+            </h2>
             <button class="sidebar-toggle" id="sidebarClose" aria-label="Close sidebar">
                 <span></span>
                 <span></span>
@@ -19,19 +25,37 @@
         </div>
         <nav class="sidebar-nav">
             <a href="/patient/dashboard?view=overview" class="nav-item {% if view == 'overview' %}active{% endif %}">
-                <span class="nav-icon">📊</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
                 <span class="nav-text">Overview</span>
             </a>
             <a href="/patient/dashboard?view=search" class="nav-item {% if view == 'search' %}active{% endif %}">
-                <span class="nav-icon">🔍</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
                 <span class="nav-text">Search Doctor</span>
             </a>
             <a href="/patient/dashboard?view=doctors" class="nav-item {% if view == 'doctors' %}active{% endif %}">
-                <span class="nav-icon">👥</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
                 <span class="nav-text">Doctors Visited</span>
             </a>
             <a href="/patient/dashboard?view=records" class="nav-item {% if view == 'records' %}active{% endif %}">
-                <span class="nav-icon">📋</span>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
                 <span class="nav-text">Medical Records</span>
             </a>
         </nav>
@@ -73,21 +97,40 @@
             <div class="dashboard-overview">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">📋</div>
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
                         <div class="stat-info">
                             <h3>{{ total_records }}</h3>
                             <p>Total Records</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">👨‍⚕️</div>
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                                <path d="M12 11v6M9 14h6"/>
+                            </svg>
+                        </div>
                         <div class="stat-info">
                             <h3>{{ unique_doctors }}</h3>
                             <p>Doctors Visited</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">📊</div>
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </div>
                         <div class="stat-info">
                             <h3>{{ records|length }}</h3>
                             <p>Recent Records</p>
@@ -99,15 +142,28 @@
                     <h2>Quick Actions</h2>
                     <div class="action-buttons">
                         <a href="/patient/dashboard?view=search" class="action-btn">
-                            <span class="action-icon">🔍</span>
+                            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
                             <span>Search Doctor</span>
                         </a>
                         <a href="/patient/dashboard?view=doctors" class="action-btn">
-                            <span class="action-icon">👥</span>
-                            <span>View All Doctors</span>
+                            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <span>Doctors Visited</span>
                         </a>
                         <a href="/patient/dashboard?view=records" class="action-btn">
-                            <span class="action-icon">📋</span>
+                            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
                             <span>View Medical Records</span>
                         </a>
                     </div>
@@ -178,7 +234,10 @@
                 </div>
                 {% else %}
                 <div class="search-placeholder">
-                    <div class="placeholder-icon">🔍</div>
+                    <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
                     <h2>Search for Doctors</h2>
                     <p>Enter a doctor's email address to search for them in the system.</p>
                 </div>
