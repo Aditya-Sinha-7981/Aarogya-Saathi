@@ -6,7 +6,13 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from jinja2 import Template
 from pathlib import Path
 from app.auth import get_current_user
-from app.models import get_user_by_id, get_records_by_doctor
+from app.models import (
+    get_user_by_id, 
+    get_records_by_doctor, 
+    search_patients, 
+    get_all_patients,
+    get_patient_record_count
+)
 
 router = APIRouter()
 TEMPLATES_DIR = Path("app/templates")
@@ -36,8 +42,21 @@ async def doctor_dashboard(request: Request):
     # Get doctor's records
     records = get_records_by_doctor(user["user_id"])
     
-    # Get query params for success message
+    # Get query params
     created = request.query_params.get("created")
+    view = request.query_params.get("view", "overview")  # overview, patients, records, search
+    
+    # Get search query if in search view
+    search_query = request.query_params.get("q", "")
+    search_results = []
+    if view == "search" and search_query:
+        search_results = search_patients(search_query)
+    elif view == "patients":
+        search_results = get_all_patients()
+    
+    # Calculate stats
+    total_records = len(records)
+    unique_patients = len(set(record["patient_id"] for record in records))
     
     html = render_template(
         "doctor_dashboard.html",
@@ -45,7 +64,13 @@ async def doctor_dashboard(request: Request):
             "request": request,
             "doctor": doctor,
             "records": records,
-            "created": created
+            "created": created,
+            "view": view,
+            "search_query": search_query,
+            "search_results": search_results,
+            "total_records": total_records,
+            "unique_patients": unique_patients,
+            "doctor_id": user["user_id"]
         }
     )
     return HTMLResponse(content=html)

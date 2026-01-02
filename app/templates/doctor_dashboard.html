@@ -6,38 +6,245 @@
     <title>Doctor Dashboard - Aarogya Saathi</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <div class="container">
-        <div class="dashboard">
-            <div class="dashboard-header">
-                <h1>👨‍⚕️ Doctor Dashboard</h1>
-                <div class="user-info">
-                    <p><strong>Email:</strong> {{ doctor.email }}</p>
-                    <p><strong>Role:</strong> {{ doctor.role }}</p>
-                    <a href="/logout" class="btn btn-secondary btn-small">Logout</a>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>👨‍⚕️ Aarogya Saathi</h2>
+            <button class="sidebar-toggle" id="sidebarClose" aria-label="Close sidebar">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/doctor/dashboard?view=overview" class="nav-item {% if view == 'overview' %}active{% endif %}">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Overview</span>
+            </a>
+            <a href="/doctor/dashboard?view=search" class="nav-item {% if view == 'search' %}active{% endif %}">
+                <span class="nav-icon">🔍</span>
+                <span class="nav-text">Search Patient</span>
+            </a>
+            <a href="/doctor/dashboard?view=patients" class="nav-item {% if view == 'patients' %}active{% endif %}">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">All Patients</span>
+            </a>
+            <a href="/doctor/dashboard?view=records" class="nav-item {% if view == 'records' %}active{% endif %}">
+                <span class="nav-icon">📋</span>
+                <span class="nav-text">Medical Records</span>
+            </a>
+            <a href="/records/create" class="nav-item">
+                <span class="nav-icon">➕</span>
+                <span class="nav-text">Create Record</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">{{ doctor.email[0].upper() }}</div>
+                <div class="user-details">
+                    <p class="user-name">{{ doctor.email }}</p>
+                    <p class="user-role">Doctor</p>
                 </div>
             </div>
-            
+            <a href="/logout" class="btn btn-secondary btn-small btn-block">Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <button class="hamburger" id="hamburger" aria-label="Toggle sidebar">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1 class="page-title">
+                {% if view == 'overview' %}Dashboard Overview
+                {% elif view == 'search' %}Search Patient
+                {% elif view == 'patients' %}All Patients
+                {% elif view == 'records' %}Medical Records
+                {% else %}Dashboard
+                {% endif %}
+            </h1>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area">
             {% if created %}
-            <div class="alert alert-success">Medical record created successfully!</div>
-            {% endif %}
-            
-            <div class="dashboard-actions">
-                <a href="/records/create" class="btn btn-primary">➕ Create Medical Record</a>
+            <div class="alert alert-success">
+                <strong>Success!</strong> Medical record created successfully!
             </div>
-            
+            {% endif %}
+
+            <!-- Overview View -->
+            {% if view == 'overview' %}
+            <div class="dashboard-overview">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-info">
+                            <h3>{{ total_records }}</h3>
+                            <p>Total Records</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>{{ unique_patients }}</h3>
+                            <p>Unique Patients</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <h3>{{ records|length }}</h3>
+                            <p>Recent Records</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h2>Quick Actions</h2>
+                    <div class="action-buttons">
+                        <a href="/records/create" class="action-btn">
+                            <span class="action-icon">➕</span>
+                            <span>Create Medical Record</span>
+                        </a>
+                        <a href="/doctor/dashboard?view=search" class="action-btn">
+                            <span class="action-icon">🔍</span>
+                            <span>Search Patient</span>
+                        </a>
+                        <a href="/doctor/dashboard?view=patients" class="action-btn">
+                            <span class="action-icon">👥</span>
+                            <span>View All Patients</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="recent-records">
+                    <h2>Recent Medical Records</h2>
+                    {% if records %}
+                    <div class="records-list">
+                        {% for record in records[:5] %}
+                        <div class="record-card">
+                            <div class="record-header">
+                                <h3>{{ record.title }}</h3>
+                                <span class="record-date">{{ record.created_at.strftime('%Y-%m-%d %H:%M') if record.created_at else 'N/A' }}</span>
+                            </div>
+                            <p class="record-patient"><strong>Patient:</strong> {{ record.patient_email }}</p>
+                            <p class="record-notes">{{ (record.notes or "No notes provided.")[:100] }}{% if record.notes and record.notes|length > 100 %}...{% endif %}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="empty-state">No medical records yet. <a href="/records/create">Create your first record!</a></p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Search View -->
+            {% if view == 'search' %}
+            <div class="search-section">
+                <div class="search-box-container">
+                    <form method="GET" action="/doctor/dashboard" class="search-form">
+                        <input type="hidden" name="view" value="search">
+                        <div class="search-input-group">
+                            <input 
+                                type="text" 
+                                name="q" 
+                                class="search-input" 
+                                placeholder="Search patients by email..." 
+                                value="{{ search_query }}"
+                                autofocus
+                            >
+                            <button type="submit" class="search-btn">🔍 Search</button>
+                        </div>
+                    </form>
+                </div>
+
+                {% if search_query %}
+                <div class="search-results">
+                    <h2>Search Results for "{{ search_query }}"</h2>
+                    {% if search_results %}
+                    <div class="patients-list">
+                        {% for patient in search_results %}
+                        <div class="patient-card">
+                            <div class="patient-info">
+                                <div class="patient-avatar">{{ patient.email[0].upper() }}</div>
+                                <div class="patient-details">
+                                    <h3>{{ patient.email }}</h3>
+                                    <p class="patient-meta">Patient ID: {{ patient.id }} | Joined: {{ patient.created_at.strftime('%Y-%m-%d') if patient.created_at else 'N/A' }}</p>
+                                </div>
+                            </div>
+                            <div class="patient-actions">
+                                <a href="/records/create?patient_id={{ patient.id }}" class="btn btn-primary btn-small">Create Record</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="empty-state">No patients found matching "{{ search_query }}".</p>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="search-placeholder">
+                    <div class="placeholder-icon">🔍</div>
+                    <h2>Search for Patients</h2>
+                    <p>Enter a patient's email address to search for them in the system.</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- All Patients View -->
+            {% if view == 'patients' %}
+            <div class="patients-section">
+                <div class="section-header">
+                    <h2>All Patients</h2>
+                    <p class="section-subtitle">Total: {{ search_results|length }} patients</p>
+                </div>
+                {% if search_results %}
+                <div class="patients-list">
+                    {% for patient in search_results %}
+                    <div class="patient-card">
+                        <div class="patient-info">
+                            <div class="patient-avatar">{{ patient.email[0].upper() }}</div>
+                            <div class="patient-details">
+                                <h3>{{ patient.email }}</h3>
+                                <p class="patient-meta">Patient ID: {{ patient.id }} | Joined: {{ patient.created_at.strftime('%Y-%m-%d') if patient.created_at else 'N/A' }}</p>
+                            </div>
+                        </div>
+                        <div class="patient-actions">
+                            <a href="/records/create?patient_id={{ patient.id }}" class="btn btn-primary btn-small">Create Record</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-state">No patients found in the system.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Records View -->
+            {% if view == 'records' %}
             <div class="records-section">
-                <h2>My Medical Records</h2>
-                
+                <div class="section-header">
+                    <h2>Medical Records</h2>
+                    <p class="section-subtitle">Total: {{ records|length }} records</p>
+                </div>
                 {% if records %}
                 <div class="records-list">
                     {% for record in records %}
                     <div class="record-card">
-                        <h3>{{ record.title }}</h3>
-                        <p class="record-meta">
-                            <strong>Patient:</strong> {{ record.patient_email }}<br>
-                            <strong>Created:</strong> {{ record.created_at.strftime('%Y-%m-%d %H:%M') if record.created_at else 'N/A' }}
-                        </p>
+                        <div class="record-header">
+                            <h3>{{ record.title }}</h3>
+                            <span class="record-date">{{ record.created_at.strftime('%Y-%m-%d %H:%M') if record.created_at else 'N/A' }}</span>
+                        </div>
+                        <p class="record-patient"><strong>Patient:</strong> {{ record.patient_email }}</p>
                         <div class="record-notes">
                             <strong>Notes:</strong>
                             <p>{{ record.notes or "No notes provided." }}</p>
@@ -46,11 +253,38 @@
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="empty-state">No medical records yet. Create your first record!</p>
+                <p class="empty-state">No medical records yet. <a href="/records/create">Create your first record!</a></p>
                 {% endif %}
             </div>
+            {% endif %}
         </div>
     </div>
+
+    <script>
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const mainContent = document.getElementById('mainContent');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('sidebar-open');
+        }
+
+        hamburger.addEventListener('click', toggleSidebar);
+        sidebarClose.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (sidebar.classList.contains('active') && 
+                    !sidebar.contains(e.target) && 
+                    !hamburger.contains(e.target)) {
+                    toggleSidebar();
+                }
+            }
+        });
+    </script>
 </body>
 </html>
-

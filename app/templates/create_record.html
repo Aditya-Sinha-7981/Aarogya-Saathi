@@ -18,7 +18,7 @@
             <form method="POST" action="/records/create">
                 <div class="form-group">
                     <label for="patient_email">Patient Email:</label>
-                    <input type="email" id="patient_email" name="patient_email" required>
+                    <input type="email" id="patient_email" name="patient_email" required value="{% if patient_email %}{{ patient_email }}{% endif %}">
                     <small>Enter the email of the patient for this record</small>
                 </div>
                 
