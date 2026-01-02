@@ -277,3 +277,62 @@ def get_patient_record_count(patient_id: int, doctor_id: int):
     finally:
         cursor.close()
         conn.close()
+
+
+def search_doctors(search_term: str, limit: int = 20):
+    """
+    Search for doctors by email (partial match).
+    
+    Args:
+        search_term: Search term to match against email
+        limit: Maximum number of results to return
+    
+    Returns:
+        list: List of doctor users matching the search term
+    """
+    conn, cursor = get_db_cursor()
+    try:
+        cursor.execute(
+            """
+            SELECT id, email, role, created_at
+            FROM users
+            WHERE role = 'doctor' AND email ILIKE %s
+            ORDER BY email
+            LIMIT %s
+            """,
+            (f"%{search_term}%", limit)
+        )
+        doctors = cursor.fetchall()
+        return [dict(doctor) for doctor in doctors]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_doctors_visited_by_patient(patient_id: int):
+    """
+    Get all unique doctors that a patient has visited (doctors who have created records for this patient).
+    
+    Args:
+        patient_id: Patient ID
+    
+    Returns:
+        list: List of unique doctor users that the patient has visited
+    """
+    conn, cursor = get_db_cursor()
+    try:
+        cursor.execute(
+            """
+            SELECT DISTINCT u.id, u.email, u.role, u.created_at
+            FROM users u
+            INNER JOIN medical_records mr ON u.id = mr.doctor_id
+            WHERE mr.patient_id = %s AND u.role = 'doctor'
+            ORDER BY u.email
+            """,
+            (patient_id,)
+        )
+        doctors = cursor.fetchall()
+        return [dict(doctor) for doctor in doctors]
+    finally:
+        cursor.close()
+        conn.close()
