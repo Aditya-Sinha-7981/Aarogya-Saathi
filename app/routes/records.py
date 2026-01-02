@@ -30,7 +30,21 @@ async def create_record_page(request: Request):
     if user["role"] != "doctor":
         raise HTTPException(status_code=403, detail="Only doctors can create records.")
     
-    html = render_template("create_record.html", {"request": request})
+    # Get patient_id from query params if provided
+    patient_id = request.query_params.get("patient_id")
+    patient_email = None
+    if patient_id:
+        try:
+            patient = get_user_by_id(int(patient_id))
+            if patient and patient["role"] == "patient":
+                patient_email = patient["email"]
+        except (ValueError, TypeError):
+            pass
+    
+    html = render_template("create_record.html", {
+        "request": request,
+        "patient_email": patient_email
+    })
     return HTMLResponse(content=html)
 
 

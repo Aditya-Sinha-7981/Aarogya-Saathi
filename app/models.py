@@ -191,3 +191,89 @@ def get_records_by_patient(patient_id: int):
         cursor.close()
         conn.close()
 
+
+def search_patients(search_term: str, limit: int = 20):
+    """
+    Search for patients by email (partial match).
+    
+    Args:
+        search_term: Search term to match against email
+        limit: Maximum number of results to return
+    
+    Returns:
+        list: List of patient users matching the search term
+    """
+    conn, cursor = get_db_cursor()
+    try:
+        cursor.execute(
+            """
+            SELECT id, email, role, created_at
+            FROM users
+            WHERE role = 'patient' AND email ILIKE %s
+            ORDER BY email
+            LIMIT %s
+            """,
+            (f"%{search_term}%", limit)
+        )
+        patients = cursor.fetchall()
+        return [dict(patient) for patient in patients]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_all_patients(limit: int = 100):
+    """
+    Get all patients.
+    
+    Args:
+        limit: Maximum number of patients to return
+    
+    Returns:
+        list: List of all patient users
+    """
+    conn, cursor = get_db_cursor()
+    try:
+        cursor.execute(
+            """
+            SELECT id, email, role, created_at
+            FROM users
+            WHERE role = 'patient'
+            ORDER BY created_at DESC
+            LIMIT %s
+            """,
+            (limit,)
+        )
+        patients = cursor.fetchall()
+        return [dict(patient) for patient in patients]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_patient_record_count(patient_id: int, doctor_id: int):
+    """
+    Get count of records for a specific patient by a specific doctor.
+    
+    Args:
+        patient_id: Patient ID
+        doctor_id: Doctor ID
+    
+    Returns:
+        int: Number of records
+    """
+    conn, cursor = get_db_cursor()
+    try:
+        cursor.execute(
+            """
+            SELECT COUNT(*) as count
+            FROM medical_records
+            WHERE patient_id = %s AND doctor_id = %s
+            """,
+            (patient_id, doctor_id)
+        )
+        result = cursor.fetchone()
+        return result['count'] if result else 0
+    finally:
+        cursor.close()
+        conn.close()
